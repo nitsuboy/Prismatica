@@ -5,28 +5,29 @@ var camera
 var levels = [
 	[
 		#level 1
-		[1,0,1,0,1,1,0,1,0],
-		[1,0,1,0,1,1,0,1,0],
-		[1,0,1,0,1,1,0,1,0],
-		[1,0,1,0,1,1,0,1,0],
-		[1,0,1,0,1,1,0,1,0],
-		[1,0,1,0,1,1,0,1,0],
-		[1,0,1,0,1,1,0,1,0],
-		[1,0,1,0,1,1,0,1,0],
-		[1,0,1,0,1,1,0,1,0],
-		[1,0,1,0,1,1,0,1,0],
+		[1,0,1,0,1,0,1,0,1],
+		[0,1,0,1,0,1,0,1,0],
+		[1,0,1,0,1,0,1,0,1],
+		[0,1,0,1,0,1,0,1,0],
+		[3,3,3,3,3,3,3,3,3],
+		[0,1,0,1,0,1,0,1,0],
+		[1,0,1,0,1,0,1,0,1],
+		[0,1,0,1,0,1,0,1,0],
+		[1,0,1,0,1,0,1,0,1]
 	],
 	[#level 2
-		[0,1,0,1,0],
-		[1,1,0,1,1],
-		[0,1,0,1,0],
-		[0,1,0,1,1],
-		[0,1,0,1,0]
+		[0,1,0,1,0,1,0,1,0],
+		[1,0,1,0,1,0,1,0,1],
+		[0,1,0,1,0,1,0,1,0],
+		[1,0,1,0,1,0,1,0,1],
+		[3,3,3,3,3,3,3,3,3],
+		[1,0,1,0,1,0,1,0,1],
+		[0,1,0,1,0,1,0,1,0],
+		[1,0,1,0,1,0,1,0,1],
+		[0,1,0,1,0,1,0,1,0]
 	]
 ]
 
-var tile_source_id = 0
-var atlas_coords = Vector2i(0, 0)
 var current_level = 0
 var tile_size = 32
 
@@ -49,10 +50,15 @@ func load_level(level_index: int):
 	for y in range(height):
 		for x in range(width):
 			if board[y][x] == 1:
-				set_cell(Vector2i(x, y), tile_source_id, atlas_coords)
+				var wall_instance = preload("res://scenes/cell.tscn").instantiate()
+				wall_instance.position = Vector2(x * tile_size, y * tile_size)
+				add_child(wall_instance)
+			elif board[y][x] == 3:
+				var wall_instance = preload("res://scenes/wall.tscn").instantiate()
+				wall_instance.position = Vector2(x * tile_size, y * tile_size)
+				add_child(wall_instance)
 	
 	center_board(width, height)
-	adjust_zoom(width, height)
 
 func center_board(width, height):
 	var board_width = width * tile_size
@@ -61,18 +67,7 @@ func center_board(width, height):
 	
 	position = (screen_size - Vector2(board_width, board_height)) /2
 
-func adjust_zoom(width, height):
-	var board_width = width * tile_size
-	var board_height = height * tile_size
-	var screen_size = get_viewport_rect().size
-	
-	#find center of the screen
-	var zoom_x = screen_size.x / board_width
-	var zoom_y = screen_size.y / board_height
-	var best_zoom = min(zoom_x, zoom_y) * 0.9 #margin
-
 func _ready() -> void:
-	#camera = get_parent().get_node("Camera2D")
 	load_level((current_level))
 	
 func _process(delta):
