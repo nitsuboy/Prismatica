@@ -1,11 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvkm5ulapoflk"]
+[gd_scene load_steps=5 format=3 uid="uid://cvkm5ulapoflk"]
 
 [ext_resource type="Script" path="res://scripts/wall.gd" id="1_7m58h"]
 [ext_resource type="Texture2D" uid="uid://7ws8knmsd6yc" path="res://assets/wall.png" id="2_0uduc"]
+[ext_resource type="Script" path="res://scenes/atributos.gd" id="3_w3eqq"]
 
-[node name="Wall" type="Node2D"]
-script = ExtResource("1_7m58h")
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_731af"]
+size = Vector2(32, 32)
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D"]
 texture = ExtResource("2_0uduc")
 centered = false
+script = ExtResource("1_7m58h")
+
+[node name="Area2D" type="Area2D" parent="."]
+script = ExtResource("3_w3eqq")
+att = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(16, 16)
+shape = SubResource("RectangleShape2D_731af")

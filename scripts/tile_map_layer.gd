@@ -5,15 +5,15 @@ var camera
 var levels = [
 	[
 		#level 1
-		[1,0,1,0,1,0,1,0,1],
-		[0,1,0,1,0,1,0,1,0],
-		[1,0,1,0,1,0,1,0,1],
-		[0,1,0,1,0,1,0,1,0],
-		[3,3,3,3,3,3,3,3,3],
-		[0,1,0,1,0,1,0,1,0],
-		[1,0,1,0,1,0,1,0,1],
-		[0,1,0,1,0,1,0,1,0],
-		[1,0,1,0,1,0,1,0,1]
+		[1,1,1,1,1,1,1,1,1],
+		[1,0,5,0,0,0,10,0,1],
+		[1,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,1],
+		[1,0,0,0,0,0,0,0,1],
+		[1,0,9,0,0,0,8,0,1],
+		[1,1,1,1,1,1,1,1,1]
 	],
 	[#level 2
 		[0,1,0,1,0,1,0,1,0],
@@ -31,10 +31,18 @@ var levels = [
 var current_level = 0
 var tile_size = 32
 
+var wall:PackedScene = preload("res://scenes/wall.tscn")
+var mirror:PackedScene = preload("res://scenes/mirror.tscn")
+var emissor:PackedScene = preload("res://scenes/emissor.tscn")
+var reciver:PackedScene = preload("res://scenes/reciver.tscn")
+#var divider = preload("scenes")
+
 const MAX_BOARD_SIZE = 30
 
 func load_level(level_index: int):
-	clear()
+	for c in get_children():
+		c.queue_free()
+	
 	var board = levels[level_index]
 	var width = board[0].size()
 	var height = board.size()
@@ -49,14 +57,55 @@ func load_level(level_index: int):
 
 	for y in range(height):
 		for x in range(width):
-			if board[y][x] == 1:
-				var wall_instance = preload("res://scenes/cell.tscn").instantiate()
-				wall_instance.position = Vector2(x * tile_size, y * tile_size)
-				add_child(wall_instance)
-			elif board[y][x] == 3:
-				var wall_instance = preload("res://scenes/wall.tscn").instantiate()
-				wall_instance.position = Vector2(x * tile_size, y * tile_size)
-				add_child(wall_instance)
+			match board[y][x]:
+				1:
+					var ins = wall.instantiate()
+					ins.position = Vector2(x * tile_size, y * tile_size)
+					add_child(ins)
+				2:
+					var ins = emissor.instantiate()
+					ins.rotation = deg_to_rad(90)
+					ins.position = Vector2(x * tile_size, y * tile_size)
+					add_child(ins)
+				3:
+					var ins = emissor.instantiate()
+					ins.rotation = deg_to_rad(180)
+					ins.position = Vector2(x * tile_size, y * tile_size)
+					add_child(ins)
+				4:
+					var ins = emissor.instantiate()
+					ins.rotation = deg_to_rad(270)
+					ins.position = Vector2(x * tile_size, y * tile_size)
+					add_child(ins)
+				5:
+					var ins = emissor.instantiate()
+					ins.position = Vector2(x * tile_size, y * tile_size)
+					add_child(ins)
+				6:
+					var ins = mirror.instantiate()
+					ins.rotation = deg_to_rad(90)
+					ins.position = Vector2(x * tile_size, y * tile_size)+(16*Vector2.ONE)
+					add_child(ins)
+				7:
+					var ins = mirror.instantiate()
+					ins.rotation = deg_to_rad(180)
+					ins.position = Vector2(x * tile_size, y * tile_size)+(16*Vector2.ONE)
+					add_child(ins)
+				8:
+					var ins = mirror.instantiate()
+					ins.rotation = deg_to_rad(270)
+					ins.position = Vector2(x * tile_size, y * tile_size)+(16*Vector2.ONE)
+					add_child(ins)
+				9:
+					var ins = mirror.instantiate()
+					ins.position = Vector2(x * tile_size, y * tile_size)+(16*Vector2.ONE)
+					add_child(ins)
+				10:
+					var ins = reciver.instantiate()
+					ins.position = Vector2(x * tile_size, y * tile_size)+(16*Vector2.ONE)
+					add_child(ins)
+				_:
+					pass
 	
 	center_board(width, height)
 
